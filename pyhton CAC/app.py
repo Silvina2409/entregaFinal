@@ -69,7 +69,7 @@ class Curso:
 
 class Inventario:
     # Definimos el constructor e inicializamos los atributos de instancia
-        def __init__(self):
+    def __init__(self):
         self.conexion = get_db_connection()
         self.cursor = self.conexion.cursor()
 
@@ -92,7 +92,7 @@ def agregar_curso(self, codigo, descripcion, cantidad, precio, duracion):
         self.conexion.commit()
         return True
 
-   ''' # Este método permite consultar datos de productos que están en el inventario
+''' # Este método permite consultar datos de productos que están en el inventario
     # Devuelve el producto correspondiente al código proporcionado o False si no existe.
     def consultar_curso(self, codigo):
         for curso in self.cursos:
@@ -112,7 +112,7 @@ def consultar_curso(self, codigo):
 
     # Este método permite modificar datos de cursos que están en el inventario
 
-  '''   # Utiliza el método consultar_curso del inventario y modificar el curso.
+'''   # Utiliza el método consultar_curso del inventario y modificar el curso.
     def modificar_curso(self, codigo, nueva_descripcion, nueva_cantidad, nuevo_precio, nueva_duracion):
         curso = self.consultar_curso(codigo)
         if curso:
@@ -130,7 +130,7 @@ def modificar_curso(self, codigo, nueva_descripcion, nueva_cantidad, nuevo_preci
 
 
     # Este método elimina el curso indicado por codigo de la lista mantenida en el inventario.
-   ''' def eliminar_curso(self, codigo):
+''' def eliminar_curso(self, codigo):
         eliminar = False
         for curso in self.cursos:
             if curso.codigo == codigo:
@@ -152,7 +152,7 @@ def eliminar_curso(self, codigo):
             print(f'Curso {codigo} no encontrado.')
 
     # Este método imprime en la terminal una lista con los datos de los cursos que figuran en el inventario.
-    '''def listar_cursos(self):
+'''def listar_cursos(self):
         print("-"*50)
         print("Lista de cursos en el inventario:")
         print("Código\tDescripción\t\tCant\tPrecio\tDuración")
@@ -220,7 +220,7 @@ def __init__(self):
    
 def agregar(self, codigo, cantidad, inventario):
         curso = inventario.consultar_curso(codigo)
-        if producto is False:
+        if curso is False:
             print("El Curso no esta disponible.")
             return False
         if curso.cantidad < cantidad:
@@ -262,7 +262,7 @@ def agregar(self, codigo, cantidad, inventario):
         print("El curso no se encuentra en el carrito.")
         return False'''
 
-     def quitar(self, codigo, cantidad, inventario):
+def quitar(self, codigo, cantidad, inventario):
         for item in self.items:
             if item.codigo == codigo:
                 if cantidad > item.cantidad:
@@ -278,7 +278,7 @@ def agregar(self, codigo, cantidad, inventario):
 
 
 
-    def mostrar(self):
+def mostrar(self):
         print("-"*50)
         print("Lista de cursos en el carrito:")
         print("Código\tDescripción\t\tCant\tPrecio\tDuracion")
