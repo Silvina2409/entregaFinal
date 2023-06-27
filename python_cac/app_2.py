@@ -147,7 +147,7 @@ class Carrito:
 
                     
 
-'''
+
 
 # Programa principal
 curso = Curso(1, 'Extraccionista de Laboratorio', 10, 5000, 4)
@@ -229,4 +229,4 @@ mi_carrito.quitar (1, 1, mi_inventario) # Quitar 1 unidad del producto con códi
 mi_carrito.mostrar()
 # Mostramos el inventario
 mi_inventario.listar_cursos()
-'''
+

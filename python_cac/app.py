@@ -22,7 +22,7 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-# Crear la tabla 'productos' si no existe
+# Crear la tabla 'cursos' si no existe
 def create_table():
     print("Creando tabla cursos...") # Para probar que se ejecuta la función
     conn = get_db_connection()
@@ -74,35 +74,22 @@ class Inventario:
     def __init__(self):
         self.conexion = get_db_connection()
         self.cursor = self.conexion.cursor()
-
-
-'''
-    # Este método permite crear objetos de la clase "Curso" y agregarlos al inventario.
+        
     def agregar_curso(self, codigo, descripcion, cantidad, precio, duracion):
-        nuevo_curso = Curso(codigo, descripcion, cantidad, precio, duracion)
-        self.cursos.append(nuevo_curso)  # Agrega un nuevo curso a la lista'''
-    
-    
-def agregar_curso(self, codigo, descripcion, cantidad, precio, duracion):
+        """Agrega un curso al sistema.
+        Otras aclaraciones...
+        """
         curso_existente = self.consultar_curso(codigo)
         if curso_existente:
             print("Ya existe un Curso con ese código.")
             return False
         nuevo_curso = Curso(codigo, descripcion, cantidad, precio, duracion)
-        sql = f'INSERT INTO productos VALUES ({codigo}, "{descripcion}", {cantidad}, {precio}, {duracion});'
+        sql = f'INSERT INTO cursos VALUES ({codigo}, "{descripcion}", {cantidad}, {precio}, {duracion});'
         self.cursor.execute(sql)
         self.conexion.commit()
         return True
 
-''' # Este método permite consultar datos de productos que están en el inventario
-    # Devuelve el producto correspondiente al código proporcionado o False si no existe.
     def consultar_curso(self, codigo):
-        for curso in self.cursos:
-            if curso.codigo == codigo:
-                return curso # Retorna un objeto
-        return False'''
-
-def consultar_curso(self, codigo):
         sql = f'SELECT * FROM cursos WHERE codigo = {codigo};'
         self.cursor.execute(sql)
         row = self.cursor.fetchone()
@@ -111,41 +98,20 @@ def consultar_curso(self, codigo):
             return Curso(codigo, descripcion, cantidad, precio, duracion)
         return False
 
-
-    # Este método permite modificar datos de cursos que están en el inventario
-
-'''   # Utiliza el método consultar_curso del inventario y modificar el curso.
     def modificar_curso(self, codigo, nueva_descripcion, nueva_cantidad, nuevo_precio, nueva_duracion):
         curso = self.consultar_curso(codigo)
         if curso:
             curso.modificar(nueva_descripcion, nueva_cantidad, nuevo_precio, nueva_duracion)
-        else: print (f'El curso {codigo} no se pudo modificar')    '''
-
-def modificar_curso(self, codigo, nueva_descripcion, nueva_cantidad, nuevo_precio, nueva_duracion):
-        curso = self.consultar_curso(codigo)
-        if curso:
-            curso.modificar(nueva_descripcion, nueva_cantidad, nuevo_precio, nueva_duracion)
-            sql = f'UPDATE productos SET descripcion = "{nueva_descripcion}", cantidad = {nueva_cantidad}, precio = {nuevo_precio}, duracion ={nueva_duracion} WHERE codigo = {codigo};' 
+            sql = f'UPDATE cursos SET descripcion = "{nueva_descripcion}", cantidad = {nueva_cantidad}, precio = {nuevo_precio}, duracion ={nueva_duracion} WHERE codigo = {codigo};' 
             self.cursor.execute(sql)
             self.conexion.commit()
 
 
 
     # Este método elimina el curso indicado por codigo de la lista mantenida en el inventario.
-''' def eliminar_curso(self, codigo):
-        eliminar = False
-        for curso in self.cursos:
-            if curso.codigo == codigo:
-                eliminar = True
-                curso_eliminar = curso       
-        if eliminar == True:
-            self.cursos.remove(curso_eliminar)
-            print(f'El curso {codigo}  ha sido eliminado.')
-        else:
-            print(f'El curso {codigo} no ha sido no encontrado.')'''
 
-def eliminar_curso(self, codigo):
-        sql = f'DELETE FROM cursos WHERE codigo = {codigo};' 
+    def eliminar_curso(self, codigo):
+        sql = f'DELETE FROM cursos WHERE codigo = {codigo};'
         self.cursor.execute(sql)
         if self.cursor.rowcount > 0:
             print(f'Curso {codigo} eliminado.')
@@ -154,16 +120,7 @@ def eliminar_curso(self, codigo):
             print(f'Curso {codigo} no encontrado.')
 
     # Este método imprime en la terminal una lista con los datos de los cursos que figuran en el inventario.
-'''def listar_cursos(self):
-        print("-"*50)
-        print("Lista de cursos en el inventario:")
-        print("Código\tDescripción\t\tCant\tPrecio\tDuración")
-        for curso in self.cursos:
-            print(f'{curso.codigo}\t{curso.descripcion}\t{curso.cantidad}\t{curso.precio}\t{curso.duracion}')
-        print("-"*50)'''
-
-
-def listar_cursos(self):
+    def listar_cursos(self):
         print("-"*50)
         print("Lista de Cursos en el inventario:")
         print("Código\tDescripción\t\tCant\tPrecio\tDuración")
@@ -178,10 +135,9 @@ def listar_cursos(self):
 
 class Carrito:
     # Definimos el constructor e inicializamos los atributos de instancia
-   ''' def __init__(self):
-        self.items = []  # Lista de items en el carrito (variable de clase)'''
 
-def __init__(self):
+
+    def __init__(self):
         self.conexion = sqlite3.connect('inventario.db')  # Conexión a la BD
         self.cursor = self.conexion.cursor()
         self.items = []
@@ -189,38 +145,9 @@ def __init__(self):
 
 
     # Este método permite agregar cursos del inventario al carrito.
-'''    def agregar(self, codigo, cantidad, inventario):
-        # Nos aseguramos que el producto esté en el inventario
-        curso = inventario.consultar_curso(codigo)
-        if curso is False: 
-            print("El curso no existe.")
-            return False
 
-
-        # Verificamos que la cantidad en stock sea suficiente
-        if curso.cantidad < cantidad:
-            print("Cantidad en stock insuficiente.")
-            return False
-
-        # Si existe y hay stock, vemos si ya existe en el carrito.
-        for item in self.items:
-            if item.codigo == codigo:
-                item.cantidad += cantidad
-                # Actualizamos la cantidad en el inventario
-                curso = inventario.consultar_curso(codigo)
-                curso.modificar(curso.descripcion, curso.cantidad - cantidad, curso.precio, curso.duracion)
-                return True
-
-
-        # Si no existe en el carrito, lo agregamos como un nuevo item.
-        nuevo_item = Curso(codigo, curso.descripcion, cantidad, curso.precio, curso.duracion)
-        self.items.append(nuevo_item)
-        # Actualizamos la cantidad en el inventario
-        curso = inventario.consultar_curso(codigo)
-        curso.modificar(curso.descripcion, curso.cantidad - cantidad, curso.precio, curso.duracion)
-        return True'''
    
-def agregar(self, codigo, cantidad, inventario):
+    def agregar(self, codigo, cantidad, inventario):
         curso = inventario.consultar_curso(codigo)
         if curso is False:
             print("El Curso no esta disponible.")
@@ -239,32 +166,12 @@ def agregar(self, codigo, cantidad, inventario):
 
         nuevo_item = Curso(codigo, curso.descripcion, cantidad, curso.precio, curso.duracion)
         self.items.append(nuevo_item)
-        sql = f'UPDATE productos SET cantidad = cantidad - {cantidad}  WHERE codigo = {codigo};'
+        sql = f'UPDATE cursos SET cantidad = cantidad - {cantidad}  WHERE codigo = {codigo};'
         self.cursor.execute(sql)
         self.conexion.commit()
         return True
 
- # Este método quita unidades de un elemento del carrito, o lo elimina.
-'''    def quitar(self, codigo, cantidad, inventario):
-        for item in self.items:
-            if item.codigo == codigo:
-                if cantidad > item.cantidad:
-                    print("Cantidad a quitar mayor a la cantidad en el carrito.")
-                    return False
-                item.cantidad -= cantidad
-                if item.cantidad == 0:
-                    self.items.remove(item)
-                # Actualizamos la cantidad en el inventario
-                curso = inventario.consultar_curso(codigo)
-                curso.modificar(curso.descripcion, curso.cantidad + cantidad, curso.precio, curso.duracion)
-                return True
-
-
-        # Si el bucle finaliza sin novedad, es que ese producto NO ESTA en el carrito.
-        print("El curso no se encuentra en el carrito.")
-        return False'''
-
-def quitar(self, codigo, cantidad, inventario):
+    def quitar(self, codigo, cantidad, inventario):
         for item in self.items:
             if item.codigo == codigo:
                 if cantidad > item.cantidad:
@@ -280,7 +187,7 @@ def quitar(self, codigo, cantidad, inventario):
 
 
 
-def mostrar(self):
+    def mostrar(self):
         print("-"*50)
         print("Lista de cursos en el carrito:")
         print("Código\tDescripción\t\tCant\tPrecio\tDuracion")
@@ -289,7 +196,6 @@ def mostrar(self):
         print("-"*50)
 
 
-'''
 
 # Programa principal
 curso = Curso(1, 'Extraccionista de Laboratorio', 10, 5000, 4)
@@ -371,5 +277,3 @@ mi_carrito.quitar (1, 1, mi_inventario) # Quitar 1 unidad del producto con códi
 mi_carrito.mostrar()
 # Mostramos el inventario
 mi_inventario.listar_cursos()
-
-'''
