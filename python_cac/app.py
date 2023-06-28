@@ -196,7 +196,7 @@ class Carrito:
         print("-"*50)
 
 
-
+'''
 # Programa principal
 curso = Curso(1, 'Extraccionista de Laboratorio', 10, 5000, 4)
 # Accedemos a los atributos del objeto
@@ -276,4 +276,64 @@ mi_carrito.quitar (1, 1, mi_inventario) # Quitar 1 unidad del producto con códi
 # Listar todos los cursos del carrito
 mi_carrito.mostrar()
 # Mostramos el inventario
+mi_inventario.listar_cursos()
+'''
+
+# Programa principal
+# Crear la base de datos y la tabla si no existen
+create_database()
+
+
+# Crear una instancia de la clase Inventario
+mi_inventario = Inventario()
+
+
+# Agregar cursos al inventario
+mi_inventario.agregar_curso(1, 'Endocrinología General', 20, 6000, 8)
+mi_inventario.agregar_curso(2, 'Procesam de muestras', 15 , 3000, 2)
+mi_inventario.agregar_curso(3, 'Resonancia Magnetica', 20, 10000, 12)
+
+
+# Consultar algún curso del inventario
+print(mi_inventario.consultar_curso(3)) #Existe, se muestra la dirección de memoria
+print(mi_inventario.consultar_curso(6)) #No existe, se muestra False
+
+
+# Listar los cursos del inventario
+mi_inventario.listar_cursos()
+# Modificar un curso del inventario
+mi_inventario.modificar_curso(2, "Procesam de Muestras", 10, 5000, 4)
+
+
+# Listar nuevamente los cursos del inventario para ver la modificación
+mi_inventario.listar_cursos()
+
+
+# Eliminar un curso
+mi_inventario.eliminar_curso(3)
+
+
+# Listar nuevamente los cursos del inventario para ver la eliminación
+mi_inventario.listar_cursos()
+
+
+# Crear una instancia de la clase Carrito
+mi_carrito = Carrito()
+# Agregar 2 unidades del curso con código 1 al carrito
+mi_carrito.agregar(1, 2, mi_inventario)  
+# Agregar 1 unidad del curso con código 2 al carrito
+mi_carrito.agregar(2, 1, mi_inventario)  
+
+
+# Mostrar el contenido del carrito y del inventario
+mi_carrito.mostrar()
+mi_inventario.listar_cursos()
+
+# Quitar 1 unidad del curso con código 1 al carrito y 1 unidad del producto con código 2 al carrito
+mi_carrito.quitar(1, 1, mi_inventario)
+mi_carrito.quitar(2, 1, mi_inventario)
+
+
+# Mostrar el contenido del carrito y del inventario
+mi_carrito.mostrar()
 mi_inventario.listar_cursos()
