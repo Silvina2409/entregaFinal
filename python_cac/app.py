@@ -19,7 +19,7 @@ DATABASE = 'inventario.db'
 
 def get_db_connection():
     print("Obteniendo conexión...") # Para probar que se ejecuta la función
-    conn = sqlite3.connect(DATABASE)
+    conn = sqlite3.connect(DATABASE, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -150,12 +150,10 @@ class Carrito:
    
     def agregar(self, codigo, cantidad, inventario):
         curso = inventario.consultar_curso(codigo)
-        if curso is False:
-            print("El Curso no esta disponible.")
-            return False
+        if curso is None:
+            return jsonify({'message': 'El curso no existe.'}), 404
         if curso.cantidad < cantidad:
-            print("Cantidad en stock insuficiente.")
-            return False
+            return jsonify({'message': 'Cantidad en stock insuficiente.'}), 400
 
         for item in self.items:
             if item.codigo == codigo:
@@ -163,38 +161,35 @@ class Carrito:
                 sql = f'UPDATE cursos SET cantidad = cantidad - {cantidad}  WHERE codigo = {codigo};'
                 self.cursor.execute(sql)
                 self.conexion.commit()
-                return True
+                return jsonify({'message': 'Curso agregado al carrito correctamente.'}), 200
 
         nuevo_item = Curso(codigo, curso.descripcion, cantidad, curso.precio, curso.duracion)
         self.items.append(nuevo_item)
         sql = f'UPDATE cursos SET cantidad = cantidad - {cantidad}  WHERE codigo = {codigo};'
         self.cursor.execute(sql)
         self.conexion.commit()
-        return True
+        return jsonify({'message': 'Producto agregado al carrito correctamente.'}), 200
 
     def quitar(self, codigo, cantidad, inventario):
         for item in self.items:
             if item.codigo == codigo:
                 if cantidad > item.cantidad:
-                    print("Cantidad a quitar mayor a la cantidad en el carrito.")
-                    return False
+                    return jsonify({'message': 'Cantidad a quitar mayor a la cantidad en el carrito.'}), 400
                 item.cantidad -= cantidad
                 if item.cantidad == 0:
                     self.items.remove(item)
                 sql = f'UPDATE cursos SET cantidad = cantidad + {cantidad} WHERE codigo = {codigo};'
                 self.cursor.execute(sql)
                 self.conexion.commit()
-                return True
-
-
+                return jsonify({'message': 'Curso quitado del carrito correctamente.'}), 200
+            return jsonify({'message': 'El curso no se encuentra en el carrito.'}), 404
 
     def mostrar(self):
-        print("-"*50)
-        print("Lista de cursos en el carrito:")
-        print("Código\tDescripción\t\tCant\tPrecio\tDuracion")
+        cursos_carrito = []
         for item in self.items:
-            print(f'{item.codigo}\t{item.descripcion}\t{item.cantidad}\t{item.precio}\t{item.duracion}')
-        print("-"*50)
+            curso = {'codigo': item.codigo, 'descripcion': item.descripcion, 'cantidad': item.cantidad, 'precio': item.precio, 'duracion': item.duracion}
+            cursos_carrito.append(curso)
+        return jsonify(cursos_carrito), 200
 
 
 # Inicialización de Flask
@@ -210,8 +205,8 @@ def index():
 
 # Ruta para obtener los datos de un Curso según su código
 @app.route('/Cursos/<int:codigo>', methods=['GET'])
-def obtener_Curso(codigo):
-    Curso = inventario.consultar_Curso(codigo)
+def obtener_curso(codigo):
+    Curso = inventario.consultar_curso(codigo)
     if Curso:
         return jsonify({
         'codigo': Curso.codigo,
@@ -223,30 +218,31 @@ def obtener_Curso(codigo):
 
 # Ruta para obtener la lista de Cursos del inventario
 @app.route('/Cursos', methods=['GET'])
-def obtener_Cursos():
-    return inventario.listar_Cursos()
+def obtener_cursos():
+    return inventario.listar_cursos()
 
 # Ruta para agregar un Curso al inventario
 @app.route('/Cursos', methods=['POST'])
-def agregar_Curso():
+def agregar_curso():
     codigo = request.json.get('codigo')
     descripcion = request.json.get('descripcion')
     cantidad = request.json.get('cantidad')
     precio = request.json.get('precio')
-    return inventario.agregar_Curso(codigo, descripcion, cantidad, precio)
+    duracion = request.json.get('duracion')
+    return inventario.agregar_curso(codigo, descripcion, cantidad, precio, duracion)
 
 # Ruta para modificar un Curso del inventario
 @app.route('/Cursos/<int:codigo>', methods=['PUT'])
-def modificar_Curso(codigo):
+def modificar_curso(codigo):
     nueva_descripcion = request.json.get('descripcion')
     nueva_cantidad = request.json.get('cantidad')
     nuevo_precio = request.json.get('precio')
-    return inventario.modificar_Curso(codigo, nueva_descripcion, nueva_cantidad, nuevo_precio)
+    return inventario.modificar_curso(codigo, nueva_descripcion, nueva_cantidad, nuevo_precio)
 
 # Ruta para eliminar un Curso del inventario
 @app.route('/Cursos/<int:codigo>', methods=['DELETE'])
-def eliminar_Curso(codigo):
-    return inventario.eliminar_Curso(codigo)
+def eliminar_curso(codigo):
+    return inventario.eliminar_curso(codigo)
 
 # Ruta para agregar un Curso al carrito
 @app.route('/carrito', methods=['POST'])
@@ -268,3 +264,7 @@ def quitar_carrito():
 @app.route('/carrito', methods=['GET'])
 def obtener_carrito():
     return carrito.mostrar()
+
+# Finalmente, si estamos ejecutando este archivo, lanzamos app.
+if __name__ == '__main__':
+    app.run()
