@@ -1,8 +1,8 @@
 '''
 Hola chicas! Como estan? Les envio el codigo que estuve haciendo. Le hice algunas modificaciones a lo que hizo el profe, para que no quede exactamente igual. Aca les anoto lo que modifique. Cualquier cosa que quieran modificar, si quieren la pueden escribir aca asi nos entendemos entre las 3. 
- * class Curso => class Curso
+ * class Producto => class Curso
  * en el init agregue duracion del curso y al metodo modificar tambien.
- * en el programa principal al objeto Curso, lo modifique por curso
+ * en el programa principal al objeto producto, lo modifique por curso
  * Utilice los nombres de los cursos que usamos en el ancla al instanciar los objetos
  * deje todos los comentarios que hizo el profe para orientarnos
  * en la class inventario, en el init porductos lo modifique por cursos
@@ -63,7 +63,7 @@ class Curso:
         self.precio = precio           # Precio 
         self.duracion= duracion        # Duración 
 
-    # Este método permite modificar un Curso.
+    # Este método permite modificar un producto.
     def modificar(self, nueva_descripcion, nueva_cantidad, nuevo_precio, duracion):
         self.descripcion = nueva_descripcion  # Modifica la descripción
         self.cantidad = nueva_cantidad        # Modifica la cantidad
@@ -82,12 +82,13 @@ class Inventario:
         """
         curso_existente = self.consultar_curso(codigo)
         if curso_existente:
-            return jsonify({'message': 'Ya existe un curso con ese código.'}), 400
+            print("Ya existe un Curso con ese código.")
+            return False
         nuevo_curso = Curso(codigo, descripcion, cantidad, precio, duracion)
         sql = f'INSERT INTO cursos VALUES ({codigo}, "{descripcion}", {cantidad}, {precio}, {duracion});'
         self.cursor.execute(sql)
         self.conexion.commit()
-        return jsonify({'message': 'Curso agregado correctamente.'}), 200
+        return True
 
     def consultar_curso(self, codigo):
         sql = f'SELECT * FROM cursos WHERE codigo = {codigo};'
@@ -105,8 +106,6 @@ class Inventario:
             sql = f'UPDATE cursos SET descripcion = "{nueva_descripcion}", cantidad = {nueva_cantidad}, precio = {nuevo_precio}, duracion ={nueva_duracion} WHERE codigo = {codigo};' 
             self.cursor.execute(sql)
             self.conexion.commit()
-            return jsonify({'message': 'Curso modificado correctamente.'}), 200
-        return jsonify({'message': 'Curso no encontrado.'}), 404
 
 
 
@@ -118,19 +117,20 @@ class Inventario:
         if self.cursor.rowcount > 0:
             print(f'Curso {codigo} eliminado.')
             self.conexion.commit()
-            return jsonify({'message': 'Curso eliminado correctamente.'}), 200
-        return jsonify({'message': 'Curso no encontrado.'}), 404
+        else:
+            print(f'Curso {codigo} no encontrado.')
 
     # Este método imprime en la terminal una lista con los datos de los cursos que figuran en el inventario.
     def listar_cursos(self):
+        print("-"*50)
+        print("Lista de Cursos en el inventario:")
+        print("Código\tDescripción\t\tCant\tPrecio\tDuración")
         self.cursor.execute("SELECT * FROM cursos ")
         rows = self.cursor.fetchall()
-        cursos = []
         for row in rows:
             codigo, descripcion, cantidad, precio, duracion = row
-            curso = {'codigo': codigo, 'descripcion': descripcion, 'cantidad': cantidad, 'precio': precio, 'duracion': duracion}
-            cursos.append(curso)
-        return jsonify(cursos), 200
+            print(f'{codigo}\t{descripcion}\t{cantidad}\t{precio}\t{duracion}')
+        print("-"*50)
 
 
 
@@ -197,74 +197,144 @@ class Carrito:
         print("-"*50)
 
 
-# Inicialización de Flask
-app = Flask(__name__)
+'''
+# Programa principal
+curso = Curso(1, 'Extraccionista de Laboratorio', 10, 5000, 4)
+# Accedemos a los atributos del objeto
+print(f'{curso.codigo} | {curso.descripcion} | {curso.cantidad} | {curso.precio} | {curso.duracion} ')
+# Modificar los datos del curso
+curso.modificar( 'Endocrinologia', 10, 6000, 8) 
+print(f'{curso.codigo} | {curso.descripcion} | {curso.cantidad} | {curso.precio} | {curso.duracion}')
 
-carrito = Carrito() # Instanciamos un carrito
-inventario = Inventario() # Instanciamos un inventario
 
-# Ruta para obtener el index
-@app.route('/')
-def index():
-    return 'API de Inventario'
+# Crear una instancia de la clase Inventario
+mi_inventario = Inventario() 
 
-# Ruta para obtener los datos de un Curso según su código
-@app.route('/Cursos/<int:codigo>', methods=['GET'])
-def obtener_Curso(codigo):
-    Curso = inventario.consultar_Curso(codigo)
-    if Curso:
-        return jsonify({
-        'codigo': Curso.codigo,
-        'descripcion': Curso.descripcion,
-        'cantidad': Curso.cantidad,
-        'precio': Curso.precio
-        }), 200
-    return jsonify({'message': 'Curso no encontrado.'}), 404
 
-# Ruta para obtener la lista de Cursos del inventario
-@app.route('/Cursos', methods=['GET'])
-def obtener_Cursos():
-    return inventario.listar_Cursos()
+# Agregar cursos 
+mi_inventario.agregar_curso(1, 'Endocrinología General', 20, 6000, 8)
+mi_inventario.agregar_curso(2, 'Procesam de muestras', 15 , 3000, 2)
+mi_inventario.agregar_curso(3, 'Resonancia Magnetica', 20, 10000, 12)
+mi_inventario.agregar_curso(4, 'Tomografía Computada', 30, 8000, 8)
+mi_inventario.agregar_curso(5, 'Mamografia Nivel 1', 10, 8000, 8)
 
-# Ruta para agregar un Curso al inventario
-@app.route('/Cursos', methods=['POST'])
-def agregar_Curso():
-    codigo = request.json.get('codigo')
-    descripcion = request.json.get('descripcion')
-    cantidad = request.json.get('cantidad')
-    precio = request.json.get('precio')
-    return inventario.agregar_Curso(codigo, descripcion, cantidad, precio)
 
-# Ruta para modificar un Curso del inventario
-@app.route('/Cursos/<int:codigo>', methods=['PUT'])
-def modificar_Curso(codigo):
-    nueva_descripcion = request.json.get('descripcion')
-    nueva_cantidad = request.json.get('cantidad')
-    nuevo_precio = request.json.get('precio')
-    return inventario.modificar_Curso(codigo, nueva_descripcion, nueva_cantidad, nuevo_precio)
+# Consultar un curso 
+curso = mi_inventario.consultar_curso(30)
+if curso != False:
+    print(f'Curso encontrado:\nCódigo: {curso.codigo}\nDescripción: {curso.descripcion}\nCantidad: {curso.cantidad}\nPrecio: {curso.precio}\n Duracion: {curso.duracion}')  
+else:
+    print("Curso  no encontrado.")
 
-# Ruta para eliminar un Curso del inventario
-@app.route('/Cursos/<int:codigo>', methods=['DELETE'])
-def eliminar_Curso(codigo):
-    return inventario.eliminar_Curso(codigo)
 
-# Ruta para agregar un Curso al carrito
-@app.route('/carrito', methods=['POST'])
-def agregar_carrito():
-    codigo = request.json.get('codigo')
-    cantidad = request.json.get('cantidad')
-    inventario = Inventario()
-    return carrito.agregar(codigo, cantidad, inventario)
+# Modificar un curso
+mi_inventario.modificar_curso(3, 'Resonancia Magnetica', 20, 15000, 12)
 
-# Ruta para quitar un Curso del carrito
-@app.route('/carrito', methods=['DELETE'])
-def quitar_carrito():
-    codigo = request.json.get('codigo')
-    cantidad = request.json.get('cantidad')
-    inventario = Inventario()
-    return carrito.quitar(codigo, cantidad, inventario)
 
-# Ruta para obtener el contenido del carrito
-@app.route('/carrito', methods=['GET'])
-def obtener_carrito():
-    return carrito.mostrar()
+# Listar todos los cursos
+mi_inventario.listar_cursos()
+
+
+# Eliminar un curso 
+mi_inventario.eliminar_curso(2)
+
+
+# Confirmamos que haya sido eliminado
+mi_inventario.listar_cursos()
+
+# ---------------------------------------------------------------------
+# Ejemplo de uso de las clases y objetos definidos antes:
+# ---------------------------------------------------------------------
+
+
+# Crear una instancia de la clase Inventario
+mi_inventario = Inventario()
+
+
+# Crear una instancia de la clase Carrito
+mi_carrito = Carrito()
+
+
+# Crear 3 cursos y agregarlos al inventario
+mi_inventario.agregar_curso(1, 'Endocrinología General', 20, 6000, 8)
+mi_inventario.agregar_curso(2, 'Procesam de muestras', 15 , 3000, 2)
+mi_inventario.agregar_curso(3, 'Resonancia Magnetica', 20, 10000, 12)
+
+
+# Listar todos los cursos del inventario
+mi_inventario.listar_cursos()
+
+
+# Agregar 2 cursos al carrito
+mi_carrito.agregar(1, 2, mi_inventario) # Agregar 2 unidades del producto con código 1 al carrito
+mi_carrito.agregar(3, 4, mi_inventario) # Agregar 1 unidad del producto con código 3 al carrito
+mi_carrito.quitar (1, 1, mi_inventario) # Quitar 1 unidad del producto con código 1 al carrito
+
+# Listar todos los cursos del carrito
+mi_carrito.mostrar()
+# Quitar 1 curso al carrito
+mi_carrito.quitar (1, 1, mi_inventario) # Quitar 1 unidad del producto con código 1 al carrito
+# Listar todos los cursos del carrito
+mi_carrito.mostrar()
+# Mostramos el inventario
+mi_inventario.listar_cursos()
+'''
+
+# Programa principal
+# Crear la base de datos y la tabla si no existen
+create_database()
+
+
+# Crear una instancia de la clase Inventario
+mi_inventario = Inventario()
+
+
+# Agregar cursos al inventario
+mi_inventario.agregar_curso(1, 'Endocrinología General', 20, 6000, 8)
+mi_inventario.agregar_curso(2, 'Procesam de muestras', 15 , 3000, 2)
+mi_inventario.agregar_curso(3, 'Resonancia Magnetica', 20, 10000, 12)
+
+
+# Consultar algún curso del inventario
+print(mi_inventario.consultar_curso(3)) #Existe, se muestra la dirección de memoria
+print(mi_inventario.consultar_curso(6)) #No existe, se muestra False
+
+
+# Listar los cursos del inventario
+mi_inventario.listar_cursos()
+# Modificar un curso del inventario
+mi_inventario.modificar_curso(2, "Procesam de Muestras", 10, 5000, 4)
+
+
+# Listar nuevamente los cursos del inventario para ver la modificación
+mi_inventario.listar_cursos()
+
+
+# Eliminar un curso
+mi_inventario.eliminar_curso(3)
+
+
+# Listar nuevamente los cursos del inventario para ver la eliminación
+mi_inventario.listar_cursos()
+
+
+# Crear una instancia de la clase Carrito
+mi_carrito = Carrito()
+# Agregar 2 unidades del curso con código 1 al carrito
+mi_carrito.agregar(1, 2, mi_inventario)  
+# Agregar 1 unidad del curso con código 2 al carrito
+mi_carrito.agregar(2, 1, mi_inventario)  
+
+
+# Mostrar el contenido del carrito y del inventario
+mi_carrito.mostrar()
+mi_inventario.listar_cursos()
+
+# Quitar 1 unidad del curso con código 1 al carrito y 1 unidad del producto con código 2 al carrito
+mi_carrito.quitar(1, 1, mi_inventario)
+mi_carrito.quitar(2, 1, mi_inventario)
+
+
+# Mostrar el contenido del carrito y del inventario
+mi_carrito.mostrar()
+mi_inventario.listar_cursos()
