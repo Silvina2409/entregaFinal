@@ -64,11 +64,11 @@ class Curso:
         self.duracion= duracion        # Duración 
 
     # Este método permite modificar un Curso.
-    def modificar(self, nueva_descripcion, nueva_cantidad, nuevo_precio, duracion):
+    def modificar(self, nueva_descripcion, nueva_cantidad, nuevo_precio, nueva_duracion):
         self.descripcion = nueva_descripcion  # Modifica la descripción
         self.cantidad = nueva_cantidad        # Modifica la cantidad
         self.precio = nuevo_precio            # Modifica el precio
-        self.duracion= duracion               # Modifica la duracion  
+        self.duracion= nueva_duracion         # Modifica la duracion  
 
 class Inventario:
     # Definimos el constructor e inicializamos los atributos de instancia
@@ -96,7 +96,7 @@ class Inventario:
         if row:
             codigo, descripcion, cantidad, precio, duracion = row
             return Curso(codigo, descripcion, cantidad, precio, duracion)
-        return False
+        return None
 
     def modificar_curso(self, codigo, nueva_descripcion, nueva_cantidad, nuevo_precio, nueva_duracion):
         curso = self.consultar_curso(codigo)
@@ -139,10 +139,9 @@ class Carrito:
 
 
     def __init__(self):
-        self.conexion = sqlite3.connect('inventario.db')  # Conexión a la BD
+        self.conexion = get_db_connection()
         self.cursor = self.conexion.cursor()
         self.items = []
-
 
 
     # Este método permite agregar cursos del inventario al carrito.
@@ -212,7 +211,8 @@ def obtener_curso(codigo):
         'codigo': Curso.codigo,
         'descripcion': Curso.descripcion,
         'cantidad': Curso.cantidad,
-        'precio': Curso.precio
+        'precio': Curso.precio,
+        'duracion': Curso.duracion
         }), 200
     return jsonify({'message': 'Curso no encontrado.'}), 404
 
@@ -237,7 +237,8 @@ def modificar_curso(codigo):
     nueva_descripcion = request.json.get('descripcion')
     nueva_cantidad = request.json.get('cantidad')
     nuevo_precio = request.json.get('precio')
-    return inventario.modificar_curso(codigo, nueva_descripcion, nueva_cantidad, nuevo_precio)
+    nueva_duracion = request.json.get('duracion')
+    return inventario.modificar_curso(codigo, nueva_descripcion, nueva_cantidad, nuevo_precio, nueva_duracion)
 
 # Ruta para eliminar un Curso del inventario
 @app.route('/Cursos/<int:codigo>', methods=['DELETE'])
