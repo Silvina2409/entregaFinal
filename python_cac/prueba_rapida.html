@@ -47,9 +47,7 @@
             var cantidad = document.getElementById('cantidad').value
             var precio = document.getElementById('precio').value
             var duracion = document.getElementById('duracion').value
-
-
-
+            
             // Creamos un objeto con los datos del curso
             var curso = {
                 codigo: codigo,
@@ -60,7 +58,12 @@
             }
             console.log(curso)
             // Realizamos la solicitud POST al servidor
-            url = 'https://proyectoancla.pythonanywhere.com/'
+            // NOTA: Faltaba la ruta "/cursos" después de la URL
+            // base.
+            // Cada endpoint tiene su ruta, y los requests tienen que ir
+            // a la ruta correspondiente.
+            // Laura. 2/7/2023
+            url = 'https://proyectoancla.pythonanywhere.com/cursos'
             fetch(url, {
                 method: 'POST',
                 headers: {
