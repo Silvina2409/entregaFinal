@@ -13,6 +13,7 @@ Hola chicas! Como estan? Les envio el codigo que estuve haciendo. Le hice alguna
 
 import sqlite3
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 
 # Configurar la conexión a la base de datos SQLite
 DATABASE = 'inventario.db'
@@ -193,6 +194,7 @@ class Carrito:
 
 # Inicialización de Flask
 app = Flask(__name__)
+CORS(app)
 
 carrito = Carrito() # Instanciamos un carrito
 inventario = Inventario() # Instanciamos un inventario
@@ -203,26 +205,26 @@ def index():
     return 'API de Inventario'
 
 # Ruta para obtener los datos de un Curso según su código
-@app.route('/Cursos/<int:codigo>', methods=['GET'])
+@app.route('/cursos/<int:codigo>', methods=['GET'])
 def obtener_curso(codigo):
-    Curso = inventario.consultar_curso(codigo)
-    if Curso:
+    curso = inventario.consultar_curso(codigo)
+    if curso:
         return jsonify({
-        'codigo': Curso.codigo,
-        'descripcion': Curso.descripcion,
-        'cantidad': Curso.cantidad,
-        'precio': Curso.precio,
-        'duracion': Curso.duracion
+        'codigo': curso.codigo,
+        'descripcion': curso.descripcion,
+        'cantidad': curso.cantidad,
+        'precio': curso.precio,
+        'duracion': curso.duracion
         }), 200
     return jsonify({'message': 'Curso no encontrado.'}), 404
 
 # Ruta para obtener la lista de Cursos del inventario
-@app.route('/Cursos', methods=['GET'])
+@app.route('/cursos', methods=['GET'])
 def obtener_cursos():
     return inventario.listar_cursos()
 
 # Ruta para agregar un Curso al inventario
-@app.route('/Cursos', methods=['POST'])
+@app.route('/cursos', methods=['POST'])
 def agregar_curso():
     codigo = request.json.get('codigo')
     descripcion = request.json.get('descripcion')
@@ -232,7 +234,7 @@ def agregar_curso():
     return inventario.agregar_curso(codigo, descripcion, cantidad, precio, duracion)
 
 # Ruta para modificar un Curso del inventario
-@app.route('/Cursos/<int:codigo>', methods=['PUT'])
+@app.route('/cursos/<int:codigo>', methods=['PUT'])
 def modificar_curso(codigo):
     nueva_descripcion = request.json.get('descripcion')
     nueva_cantidad = request.json.get('cantidad')
@@ -241,7 +243,7 @@ def modificar_curso(codigo):
     return inventario.modificar_curso(codigo, nueva_descripcion, nueva_cantidad, nuevo_precio, nueva_duracion)
 
 # Ruta para eliminar un Curso del inventario
-@app.route('/Cursos/<int:codigo>', methods=['DELETE'])
+@app.route('/cursos/<int:codigo>', methods=['DELETE'])
 def eliminar_curso(codigo):
     return inventario.eliminar_curso(codigo)
 
@@ -269,3 +271,5 @@ def obtener_carrito():
 # Finalmente, si estamos ejecutando este archivo, lanzamos app.
 if __name__ == '__main__':
     app.run()
+
+    
