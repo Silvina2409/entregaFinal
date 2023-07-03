@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Cursos</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+
+<body>
+    <h1>Instituto Ancla Salud</h1>
+    <h3>Listado de Cursos</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th align="right">Precio</th>
+                <th align="right">Duración</th>
+                
+                
+            </tr>
+        </thead>
+        <tbody id="tablaCursos">
+        </tbody>
+    </table>
+
+
+    <div class="contenedor-centrado">
+        <a href="index.html">Menu principal</a>
+    </div>
+
+
+    <script>
+        //const URL = "http://127.0.0.1:5000/"
+        const URL = 'https://proyectoancla.pythonanywhere.com/'
+
+
+        // Realizamos la solicitud GET al servidor para obtener todos los productos
+        fetch(URL + 'cursos')
+            .then(function (response) {
+                if (response.ok) {
+                    return response.json() // Parseamos la respuesta JSON
+                } else {
+                    throw new Error('Error al obtener los cursos.')
+                }
+            })
+            .then(function (data) {
+                var tablaCursos = document.getElementById('tablaCursos')
+
+
+                // Iteramos sobre los productos y agregamos filas a la tabla
+                data.forEach(function (curso) {
+                    var fila = document.createElement('tr')
+                    fila.innerHTML = '<td>' + curso.codigo + '</td>' +
+                        '<td>' + curso.descripcion + '</td>' +
+                        '<td align="right">' + curso.cantidad + '</td>' +
+                        '<td align="right">' + curso.precio + '</td>'
+                        '<td align="right">&nbsp; &nbsp;&nbsp; &nbsp;' + curso.duracion + '</td>'
+                    tablaCursos.appendChild(fila)
+                })
+            })
+            .catch(function (error) {
+                console.log('Error:', error)
+                alert('Error al obtener los cursos.')
+            })
+    </script>
+</body>
+</html>
