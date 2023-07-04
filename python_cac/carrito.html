@@ -6,13 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Carrito</title>
   <script src="https://unpkg.com/vue@next"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Domine&family=Dosis&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
   <div id="app">
-    <h1>Carrito de compras</h1>
-    <h3>Instituo Ancla Salud</h3>
+    <h1>Instituto Ancla Salud</h1>
+    <h3> Carrito de Compras:</h3>
     <table>
       <thead>
         <tr>
@@ -64,7 +65,7 @@
       </div>
   
       <div v-if="!mostrarCarrito" class="contenedor-centrado">
-        <button @click="obtenerCarrito">Mostrar carrito</button>
+        <button class="carrito" @click="obtenerCarrito">Mostrar carrito</button>
       </div>
   
       <div class="contenedor-centrado">

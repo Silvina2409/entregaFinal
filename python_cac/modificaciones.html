@@ -6,17 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modificar Producto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Domine&family=Dosis&display=swap" rel="stylesheet"> 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <h1>Modificar Cursos del Inventario</h1>
-    <h3>Instituto Ancla Salud</h3>
+    <h1>Instituto Ancla Salud</h1>
+    <h3>Modificar Cursos del Inventario</h3>
     <div id="app">
         <form @submit.prevent="obtenerCurso">
             <label for="codigo">Código:</label>
             <input type="text" v-model="codigo" required><br>
-            <button type="submit">Modificar Curso</button> <a href="index.html">Menu principal</a>
+            <button type="submit">Modificar Curso</button> <a  class=" modificar" href="index.html">Menu principal</a>
         </form>
 
         <div v-if="mostrarDatosCurso">

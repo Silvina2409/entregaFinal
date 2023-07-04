@@ -1,8 +1,27 @@
 /* Estilos para todo el proyecto */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    font-family: 'Cinzel', sans-serif, 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    background-color: #85b2b9;
 }
+h1{ 
+    
+    color:#eeeeee;
+    font-size: 5vw;
+    text-shadow: 0.3vw 0.3vw black;
+    text-align: center;
+    margin-top: 75px;
+}
+h3{
+    text-align: center;
+    font-size: 2vw;
+    margin-bottom: 50px;
+    margin-top: 30px;
+}
+
+    
 
 
 .contenedor-centrado {
@@ -21,7 +40,7 @@ p {
 }
 
 
-h1, h2, h3, h4, h5, h6 {
+ h2,  h4, h5, h6 {
     text-align: center;
     color: #007bff;
 }
@@ -33,25 +52,42 @@ form {
     padding: 20px;
     background-color: white;
     border: 1px solid lightslategray;
-    border-radius: 5px;
+    border-radius: 2px;
+    margin-bottom: 100px;
 }
 
 
 table {
     max-width: 90%;
     margin: 0 auto;
-    padding: 20px;
-    background-color: white;
-    border: 1px solid lightslategray;
+    padding: 1px;
+    background-color: #85b2b9;
+    border: 5px solid #eeeeee;
     border-radius: 5px;
+    margin-bottom: 100px;
 }
 
 
+.listadoTabla{
+ 
+    font-size: 20px;
+    border: 0.5px solid black;
+    background-color: white;
+}
 label {
     display: block;
     margin-bottom: 5px;
+    background-color: white ;
 }
-
+.estilo{
+    background-color:#85b2b9 ;
+    color: black;
+    font-size: 15px;
+    padding: 15px;
+}
+.estilo:hover{
+    background-color: #eeeeee;
+}
 
 input[type="text"],
 input[type="number"],
@@ -75,15 +111,15 @@ input[type="submit"] {
 
 
 input[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color: lightblue;
 }
 
 
 button {
     padding: 8px;
     margin:4px;
-    background-color: #007bff;
-    color: #ffffff;
+    background-color: #85b2b9 ;
+    color: black;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -91,23 +127,30 @@ button {
 
 
 button:hover {
-    background-color: #0056b3;
+    background-color:lightblue ;
 }
 
 
 a {
-    padding: 8px;
-    margin:4px;
-    background-color: #fdab13;
-    color: #ffffff;
+    padding: 15px;
+    margin:10px;
+    background-color: #eeeeee;
+    color: black;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     text-decoration: none;
-    font-size: 85%;
+    font-size: 20px;
 }
 
 
 a:hover {
-    background-color: #cd7b00;
+    background-color:lightblue ;
+}
+.carrito{
+    background-color: #eeeeee;
+    font-size: 15px;
+}
+.modificar{
+    font-size: 15px;
 }
