@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Cursos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Eliminacion de Cursos</h1>
+    <h3>Instituto Ancla Salud</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th align="right">Precio</th>
+                <th align="right">duracion</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="curso in cursos">
+                <td>{{ curso.codigo }}</td>
+                <td>{{ curso.descripcion }}</td>
+                <td align="right">{{ curso.cantidad }}</td>
+                <td align="right">{{ curso.precio }}</td>
+                <td align="right">{{ curso.duracion }}</td>
+                <td><button @click="eliminarCurso(curso.codigo)">Eliminar</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="contenedor-centrado">
+        <a href="index.html">Menu principal</a>
+    </div>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    cursos: []
+                }
+            },
+            methods: {
+                obtenerCursos() {
+                    const URL = "https://proyectoancla.pythonanywhere.com/"
+                    fetch(URL + 'cursos')
+                        .then(response => {
+                            if (response.ok) {
+                                return response.json()
+                            } else {
+                                throw new Error('Error al obtener los cursos.')
+                            }
+                        })
+                        .then(data => {
+                            this.cursos = data
+                        })
+                        .catch(error => {
+                            console.log('Error:', error)
+                            alert('Error al obtener los cursos.')
+                        })
+                },
+                eliminarCurso(codigo) {
+                    const URL = "https://proyectoancla.pythonanywhere.com/"
+                    fetch(URL + `cursos/${codigo}`, { method: 'DELETE' })
+                        .then(response => {
+                            if (response.ok) {
+// Eliminar el producto de la lista después de eliminarlo en el servidor
+                                this.cursos = this.cursos.filter(curso => curso.codigo !== codigo)
+                                console.log('Curso eliminado correctamente.')
+                            }
+                        })
+                        .catch(error => {
+                            console.log('Error:', error)
+                            alert('Error al eliminar el Curso.')
+                        })
+                }
+            },
+            mounted() {
+                this.obtenerCursos()
+            }
+        })
+        app.mount('body')
+    </script>
+</body>
+
+</html>

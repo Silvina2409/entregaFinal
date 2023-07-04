@@ -54,13 +54,14 @@
                 var tablaCursos = document.getElementById('tablaCursos')
 
 
-                // Iteramos sobre los productos y agregamos filas a la tabla
+                // // Iteramos sobre los productos y agregamos filas a la tabla
+            
                 data.forEach(function (curso) {
                     var fila = document.createElement('tr')
                     fila.innerHTML = '<td>' + curso.codigo + '</td>' +
                         '<td>' + curso.descripcion + '</td>' +
                         '<td align="right">' + curso.cantidad + '</td>' +
-                        '<td align="right">' + curso.precio + '</td>'
+                        '<td align="right">&nbsp; &nbsp;&nbsp; &nbsp;' + curso.precio + '</td>'+
                         '<td align="right">&nbsp; &nbsp;&nbsp; &nbsp;' + curso.duracion + '</td>'
                     tablaCursos.appendChild(fila)
                 })
